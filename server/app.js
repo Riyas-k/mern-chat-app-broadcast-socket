@@ -1,22 +1,25 @@
 const express = require("express");
 const http = require("http");
-const {Server} = require("socket.io");
-const cors = require('cors')
+const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
-app.use(cors())
+app.use(cors());
 const server = http.createServer(app);
-const io = new Server(server,{
-    cors:{
-        origin:'http://localhost:5174',
-        methods:["GET","POST"]
-    }
-})
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5174",
+    methods: ["GET", "POST"],
+  },
+});
 
 io.on("connection", (socket) => {
   console.log("User connected", socket.id);
   try {
-    socket.on("message", (message, userId) => {console.log(message,userId); socket.emit('message',message)});
+    socket.on("send_message", (message, userId) => {
+      console.log(message, userId);
+      socket.broadcast.emit("receive_message", message);
+    });
     socket.on("disconnect", () => {
       console.log("user disconnected", socket.id);
     });
