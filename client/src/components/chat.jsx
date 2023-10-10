@@ -10,24 +10,31 @@ const Chat = () => {
   const [receivedMessages, setReceivedMessages] = useState([]);
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setReceivedMessages((prevMessages) => [...prevMessages, data]);
-    });
+    try {
+      socket.on("receive_message", (data) => {
+        setReceivedMessages((prevMessages) => [...prevMessages, data]);
+      });
 
-    socket.on("error", (error) => {
+      socket.on("error", (error) => {
+        console.log(error);
+      });
+    } catch (error) {
       console.log(error);
-    });
+    }
   }, []);
 
   const sendMessage = () => {
-    // Update the local state with the sent message
-    setReceivedMessages((prevMessages) => [...prevMessages, message]);
+    try {
+      setReceivedMessages((prevMessages) => [...prevMessages, message]);
 
-    // Emit the message to other users
-    socket.emit("send_message", message, "12345678"); // Replace '12345678' with the actual user ID
+      // Emit the message to other users
+      socket.emit("send_message", message, "12345678");
 
-    // Clear the input field
-    setMessage("");
+      // Clear the input field
+      setMessage("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
